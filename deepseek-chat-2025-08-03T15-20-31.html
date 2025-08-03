@@ -1,0 +1,915 @@
+<!-- 
+PDF Options for debugging:
+{
+  "margin": [
+    8,
+    8,
+    8,
+    8
+  ],
+  "image": {
+    "type": "jpeg",
+    "quality": 0.98
+  },
+  "html2canvas": {
+    "scale": 2,
+    "useCORS": true,
+    "allowTaint": true,
+    "logging": true,
+    "backgroundColor": "#ffffff"
+  },
+  "jsPDF": {
+    "unit": "mm",
+    "format": "a4",
+    "orientation": "portrait"
+  },
+  "pagebreak": {
+    "mode": [
+      "avoid-all",
+      "css",
+      "legacy"
+    ],
+    "before": ".page-break-before",
+    "after": ".page-break-after",
+    "avoid": ".avoid-break"
+  }
+}
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide to Creating DeepSeek Chat PDF Extension - DeepSeek</title>
+    <style>
+        @font-face {
+            font-family: 'Inter';
+            src: url('/Inter/static/Inter_18pt-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('./Inter/static/Inter_18pt-Medium.ttf') format('truetype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('./Inter/static/Inter_18pt-SemiBold.ttf') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('/Inter/static/Inter_18pt-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 12px;
+            background-color: white;
+        }
+        h1 {
+            text-align: left;
+            margin-bottom: 4px;
+            color: rgb(64, 64, 64);
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .timestamp {
+            text-align: left;
+            margin-bottom: 12px;
+            color: rgb(64, 64, 64);
+            font-size: 12px;
+            font-weight: 400;
+        }
+        .chat-content {
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            margin: 0;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+        .message {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        .user-message {
+            background-color: #f0f8ff;
+            border-left: 4px solid #4d6bfe;
+        }
+        .ai-message {
+            background-color: #f9f9f9;
+            border-left: 4px solid #28a745;
+        }
+        /* Page break handling */
+        .page-break-before {
+            page-break-before: always;
+            break-before: page;
+        }
+        .page-break-after {
+            page-break-after: always;
+            break-after: page;
+        }
+        .avoid-break {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        /* Ensure proper spacing around elements */
+        p, div, section {
+            margin-bottom: 8px;
+        }
+        /* Prevent orphans and widows */
+        p {
+            orphans: 3;
+            widows: 3;
+        }
+        /* Add some breathing room around code blocks */
+        pre, code {
+            margin: 8px 0;
+        }
+        h2 {
+            color: rgb(64, 64, 64);
+            font-size: 20px;
+            margin: 8px 0;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <h1>Guide to Creating DeepSeek Chat PDF Extension - DeepSeek</h1>
+    <div class="timestamp">Exported on: 8/3/2025, 6:20:31 PM</div>
+    <div id="chat-content" class="chat-content">
+        <div class="dad65929" style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; color: rgb(51, 51, 51);"><div class="_9663006"><div class="fbb737a4">Create an instruction step by step how to create an chrome extension for exporting deepseek chats as pdf</div><div class="e13328ad _3a26104"><div class="_425ea0b"><div class="ds-flex _78e0558" style="align-items: flex-end; gap: 0px;"><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px; margin-left: 14px; opacity: 1;"></div></div></div></div></div><div class="_4f9bf79 _43c05b5"><div class="_7eb2358 _58dfa60"></div><div class="ds-markdown ds-markdown--block" style="--ds-md-zoom: 1.143;"><h1>Step-by-Step Guide: Creating a Chrome Extension to Export DeepSeek Chats as PDF</h1><h2>Prerequisites</h2><ul><li><p class="ds-markdown-paragraph">Basic knowledge of HTML, CSS, and JavaScript</p></li><li><p class="ds-markdown-paragraph">Google Chrome browser</p></li><li><p class="ds-markdown-paragraph">Text editor (VS Code, Sublime Text, etc.)</p></li></ul><h2>Step 1: Set Up Your Extension Directory Structure</h2><p class="ds-markdown-paragraph">Create a folder for your extension with these files:</p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre>deepseek-pdf-export/
+├── manifest.json
+├── background.js (optional)
+├── content.js
+├── popup/
+│   ├── popup.html
+│   ├── popup.js
+│   ├── popup.css
+├── icons/
+│   ├── icon16.png
+│   ├── icon48.png
+│   ├── icon128.png
+└── lib/
+    ├── html2pdf.bundle.min.js
+    ├── jsPDF.js</pre></div><h2>Step 2: Create the Manifest File (<code>manifest.json</code>)</h2><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token punctuation">{</span>
+  <span class="token property">"manifest_version"</span><span class="token operator">:</span> <span class="token number">3</span><span class="token punctuation">,</span>
+  <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"DeepSeek Chat PDF Exporter"</span><span class="token punctuation">,</span>
+  <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"1.0"</span><span class="token punctuation">,</span>
+  <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"Export DeepSeek chats as PDF documents"</span><span class="token punctuation">,</span>
+  <span class="token property">"icons"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"16"</span><span class="token operator">:</span> <span class="token string">"icons/icon16.png"</span><span class="token punctuation">,</span>
+    <span class="token property">"48"</span><span class="token operator">:</span> <span class="token string">"icons/icon48.png"</span><span class="token punctuation">,</span>
+    <span class="token property">"128"</span><span class="token operator">:</span> <span class="token string">"icons/icon128.png"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"permissions"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token string">"activeTab"</span><span class="token punctuation">,</span>
+    <span class="token string">"scripting"</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token property">"action"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"default_popup"</span><span class="token operator">:</span> <span class="token string">"popup/popup.html"</span><span class="token punctuation">,</span>
+    <span class="token property">"default_icon"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">"16"</span><span class="token operator">:</span> <span class="token string">"icons/icon16.png"</span><span class="token punctuation">,</span>
+      <span class="token property">"48"</span><span class="token operator">:</span> <span class="token string">"icons/icon48.png"</span><span class="token punctuation">,</span>
+      <span class="token property">"128"</span><span class="token operator">:</span> <span class="token string">"icons/icon128.png"</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"content_scripts"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"matches"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"https://*.deepseek.com/*"</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+      <span class="token property">"js"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"content.js"</span><span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token property">"background"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"service_worker"</span><span class="token operator">:</span> <span class="token string">"background.js"</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></pre></div><h2>Step 3: Create the Popup HTML (<code>popup/popup.html</code>)</h2><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>DeepSeek PDF Export<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>link</span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>stylesheet<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>popup.css<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>container<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>DeepSeek Chat Export<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>exportBtn<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Export Chat as PDF<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>status<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>popup.js<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token script"></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span></pre></div><h2>Step 4: Create Popup CSS (<code>popup/popup.css</code>)</h2><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token selector">body</span> <span class="token punctuation">{</span>
+  <span class="token property">width</span><span class="token punctuation">:</span> 300px<span class="token punctuation">;</span>
+  <span class="token property">padding</span><span class="token punctuation">:</span> 15px<span class="token punctuation">;</span>
+  <span class="token property">font-family</span><span class="token punctuation">:</span> Arial<span class="token punctuation">,</span> sans-serif<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">.container</span> <span class="token punctuation">{</span>
+  <span class="token property">text-align</span><span class="token punctuation">:</span> center<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">h1</span> <span class="token punctuation">{</span>
+  <span class="token property">font-size</span><span class="token punctuation">:</span> 16px<span class="token punctuation">;</span>
+  <span class="token property">margin-bottom</span><span class="token punctuation">:</span> 15px<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">#exportBtn</span> <span class="token punctuation">{</span>
+  <span class="token property">background-color</span><span class="token punctuation">:</span> #4CAF50<span class="token punctuation">;</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> white<span class="token punctuation">;</span>
+  <span class="token property">border</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span>
+  <span class="token property">padding</span><span class="token punctuation">:</span> 10px 15px<span class="token punctuation">;</span>
+  <span class="token property">text-align</span><span class="token punctuation">:</span> center<span class="token punctuation">;</span>
+  <span class="token property">text-decoration</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span>
+  <span class="token property">display</span><span class="token punctuation">:</span> inline-block<span class="token punctuation">;</span>
+  <span class="token property">font-size</span><span class="token punctuation">:</span> 14px<span class="token punctuation">;</span>
+  <span class="token property">margin</span><span class="token punctuation">:</span> 4px 2px<span class="token punctuation">;</span>
+  <span class="token property">cursor</span><span class="token punctuation">:</span> pointer<span class="token punctuation">;</span>
+  <span class="token property">border-radius</span><span class="token punctuation">:</span> 4px<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">#exportBtn:hover</span> <span class="token punctuation">{</span>
+  <span class="token property">background-color</span><span class="token punctuation">:</span> #45a049<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">#status</span> <span class="token punctuation">{</span>
+  <span class="token property">margin-top</span><span class="token punctuation">:</span> 10px<span class="token punctuation">;</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> #666<span class="token punctuation">;</span>
+  <span class="token property">font-size</span><span class="token punctuation">:</span> 12px<span class="token punctuation">;</span>
+<span class="token punctuation">}</span></pre></div><h2>Step 5: Create Popup JavaScript (<code>popup/popup.js</code>)</h2><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre>document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'exportBtn'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'click'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  chrome<span class="token punctuation">.</span>tabs<span class="token punctuation">.</span><span class="token function">query</span><span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token literal-property property">active</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token literal-property property">currentWindow</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token parameter">tabs</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    chrome<span class="token punctuation">.</span>tabs<span class="token punctuation">.</span><span class="token function">sendMessage</span><span class="token punctuation">(</span>tabs<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>id<span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token literal-property property">action</span><span class="token operator">:</span> <span class="token string">"exportChatToPDF"</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token parameter">response</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+      document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'status'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>textContent <span class="token operator">=</span> response<span class="token operator">?.</span>status <span class="token operator">||</span> <span class="token string">"Export initiated"</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></pre></div><h2>Step 6: Create Content Script (<code>content.js</code>)</h2><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token comment">// Listen for messages from the popup</span>
+chrome<span class="token punctuation">.</span>runtime<span class="token punctuation">.</span>onMessage<span class="token punctuation">.</span><span class="token function">addListener</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">request<span class="token punctuation">,</span> sender<span class="token punctuation">,</span> sendResponse</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>request<span class="token punctuation">.</span>action <span class="token operator">===</span> <span class="token string">"exportChatToPDF"</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">exportChatToPDF</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">sendResponse</span><span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token literal-property property">status</span><span class="token operator">:</span> <span class="token string">"Exporting chat to PDF..."</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">exportChatToPDF</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// Load the jsPDF and html2pdf libraries dynamically</span>
+  <span class="token keyword">const</span> script <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">createElement</span><span class="token punctuation">(</span><span class="token string">'script'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  script<span class="token punctuation">.</span>src <span class="token operator">=</span> chrome<span class="token punctuation">.</span>runtime<span class="token punctuation">.</span><span class="token function">getURL</span><span class="token punctuation">(</span><span class="token string">'lib/html2pdf.bundle.min.js'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  script<span class="token punctuation">.</span><span class="token function-variable function">onload</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Get the chat container - adjust selector based on DeepSeek's actual HTML structure</span>
+    <span class="token keyword">const</span> chatContainer <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'.chat-container'</span><span class="token punctuation">)</span> <span class="token operator">||</span> 
+                         document<span class="token punctuation">.</span><span class="token function">querySelector</span><span class="token punctuation">(</span><span class="token string">'.conversation'</span><span class="token punctuation">)</span> <span class="token operator">||</span> 
+                         document<span class="token punctuation">.</span>body<span class="token punctuation">;</span>
+    
+    <span class="token comment">// Options for PDF export</span>
+    <span class="token keyword">const</span> opt <span class="token operator">=</span> <span class="token punctuation">{</span>
+      <span class="token literal-property property">margin</span><span class="token operator">:</span> <span class="token number">10</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">filename</span><span class="token operator">:</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">deepseek-chat-</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toISOString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">slice</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">.pdf</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">,</span>
+      <span class="token literal-property property">image</span><span class="token operator">:</span> <span class="token punctuation">{</span> <span class="token literal-property property">type</span><span class="token operator">:</span> <span class="token string">'jpeg'</span><span class="token punctuation">,</span> <span class="token literal-property property">quality</span><span class="token operator">:</span> <span class="token number">0.98</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">html2canvas</span><span class="token operator">:</span> <span class="token punctuation">{</span> <span class="token literal-property property">scale</span><span class="token operator">:</span> <span class="token number">2</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">jsPDF</span><span class="token operator">:</span> <span class="token punctuation">{</span> <span class="token literal-property property">unit</span><span class="token operator">:</span> <span class="token string">'mm'</span><span class="token punctuation">,</span> <span class="token literal-property property">format</span><span class="token operator">:</span> <span class="token string">'a4'</span><span class="token punctuation">,</span> <span class="token literal-property property">orientation</span><span class="token operator">:</span> <span class="token string">'portrait'</span> <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    
+    <span class="token comment">// Export to PDF</span>
+    <span class="token function">html2pdf</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">from</span><span class="token punctuation">(</span>chatContainer<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>opt<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">save</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  document<span class="token punctuation">.</span>head<span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>script<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></pre></div><h2>Step 7: Add Required Libraries</h2><ol start="1"><li><p class="ds-markdown-paragraph">Download <code>html2pdf.bundle.min.js</code> from <a href="https://raw.githubusercontent.com/eKoopmans/html2pdf.js/master/dist/html2pdf.bundle.min.js" target="_blank" rel="noreferrer">https://raw.githubusercontent.com/eKoopmans/html2pdf.js/master/dist/html2pdf.bundle.min.js</a></p></li><li><p class="ds-markdown-paragraph">Place it in the <code>lib/</code> folder</p></li></ol><h2>Step 8: Create Extension Icons</h2><ul><li><p class="ds-markdown-paragraph">Create three icon sizes (16x16, 48x48, 128x128 pixels)</p></li><li><p class="ds-markdown-paragraph">Save them in the <code>icons/</code> folder with the names specified in the manifest</p></li></ul><h2>Step 9: Load the Extension in Chrome</h2><ol start="1"><li><p class="ds-markdown-paragraph">Open Chrome and go to <code>chrome://extensions/</code></p></li><li><p class="ds-markdown-paragraph">Enable "Developer mode" (toggle in top right)</p></li><li><p class="ds-markdown-paragraph">Click "Load unpacked"</p></li><li><p class="ds-markdown-paragraph">Select your extension folder</p></li></ol><h2>Step 10: Test the Extension</h2><ol start="1"><li><p class="ds-markdown-paragraph">Navigate to DeepSeek chat</p></li><li><p class="ds-markdown-paragraph">Click the extension icon in the toolbar</p></li><li><p class="ds-markdown-paragraph">Click "Export Chat as PDF"</p></li><li><p class="ds-markdown-paragraph">Verify the PDF is generated with the chat content</p></li></ol><h2>Optional Enhancements</h2><ol start="1"><li><p class="ds-markdown-paragraph">Add options for PDF customization (page size, orientation, etc.)</p></li><li><p class="ds-markdown-paragraph">Implement selective export (only certain messages)</p></li><li><p class="ds-markdown-paragraph">Add timestamp to filename</p></li><li><p class="ds-markdown-paragraph">Include styling improvements for the PDF output</p></li></ol><h2>Notes</h2><ul><li><p class="ds-markdown-paragraph">You may need to adjust the chat container selector in <code>content.js</code> based on DeepSeek's actual HTML structure</p></li><li><p class="ds-markdown-paragraph">For more advanced features, consider using the Chrome extension Storage API to save user preferences</p></li><li><p class="ds-markdown-paragraph">Make sure your extension follows Chrome Web Store policies if you plan to publish it</p></li></ul></div><div class="ds-flex" style="margin-top: 12px; height: 20px; margin-bottom: 20px; align-items: center; gap: 10px;"><div class="ds-flex _965abe9" style="align-items: center; gap: 16px;"><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div></div><div style="flex: 1 1 0%;"></div></div></div><div class="_9663006"><div class="fbb737a4">how i can convert page into pdf with good styles and other with js?</div><div class="e13328ad _3a26104"><div class="_425ea0b"><div class="ds-flex _78e0558" style="align-items: flex-end; gap: 0px;"><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px; margin-left: 14px; opacity: 1;"></div></div></div></div></div><div class="_4f9bf79 _43c05b5"><div class="_7eb2358 _58dfa60"></div><div class="ds-markdown ds-markdown--block" style="--ds-md-zoom: 1.143;"><h1>Converting Web Pages to PDF with JavaScript (Styling Preserved)</h1><p class="ds-markdown-paragraph">There are several robust JavaScript libraries that can help you convert HTML to PDF while preserving styles. Here are the best approaches:</p><h2>1. Using html2pdf.js (Recommended)</h2><p class="ds-markdown-paragraph">This is one of the most popular solutions that combines html2canvas and jsPDF.</p><h3>Implementation:</h3><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token script"></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">function</span> <span class="token function">generatePDF</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// Get the element you want to convert</span>
+  <span class="token keyword">const</span> element <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'content-to-export'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+  <span class="token comment">// Options for the PDF</span>
+  <span class="token keyword">const</span> opt <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">margin</span><span class="token operator">:</span>       <span class="token number">10</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">filename</span><span class="token operator">:</span>     <span class="token string">'document.pdf'</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">image</span><span class="token operator">:</span>       <span class="token punctuation">{</span> <span class="token literal-property property">type</span><span class="token operator">:</span> <span class="token string">'jpeg'</span><span class="token punctuation">,</span> <span class="token literal-property property">quality</span><span class="token operator">:</span> <span class="token number">0.98</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">html2canvas</span><span class="token operator">:</span> <span class="token punctuation">{</span> 
+      <span class="token literal-property property">scale</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span>          <span class="token comment">// Higher quality</span>
+      <span class="token literal-property property">logging</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>      <span class="token comment">// Debug logging</span>
+      <span class="token literal-property property">useCORS</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>      <span class="token comment">// Enable cross-origin images</span>
+      <span class="token literal-property property">allowTaint</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>   <span class="token comment">// Allow tainted images</span>
+      <span class="token literal-property property">letterRendering</span><span class="token operator">:</span> <span class="token boolean">true</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">jsPDF</span><span class="token operator">:</span>       <span class="token punctuation">{</span> <span class="token literal-property property">unit</span><span class="token operator">:</span> <span class="token string">'mm'</span><span class="token punctuation">,</span> <span class="token literal-property property">format</span><span class="token operator">:</span> <span class="token string">'a4'</span><span class="token punctuation">,</span> <span class="token literal-property property">orientation</span><span class="token operator">:</span> <span class="token string">'portrait'</span> <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// Generate the PDF</span>
+  <span class="token function">html2pdf</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>opt<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">from</span><span class="token punctuation">(</span>element<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">save</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span></pre></div><h3>Advantages:</h3><ul><li><p class="ds-markdown-paragraph">Preserves most CSS styles</p></li><li><p class="ds-markdown-paragraph">Handles complex layouts well</p></li><li><p class="ds-markdown-paragraph">Supports images and fonts</p></li><li><p class="ds-markdown-paragraph">Easy to use</p></li></ul><h2>2. Using jsPDF with html2canvas</h2><p class="ds-markdown-paragraph">For more control, you can use these libraries separately:</p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token script"></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token script"></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">async</span> <span class="token keyword">function</span> <span class="token function">generatePDF</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> <span class="token punctuation">{</span> jsPDF <span class="token punctuation">}</span> <span class="token operator">=</span> window<span class="token punctuation">.</span>jspdf<span class="token punctuation">;</span>
+  <span class="token keyword">const</span> element <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'content-to-export'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+  <span class="token comment">// Create canvas from HTML</span>
+  <span class="token keyword">const</span> canvas <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">html2canvas</span><span class="token punctuation">(</span>element<span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">scale</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">logging</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">useCORS</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">allowTaint</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">letterRendering</span><span class="token operator">:</span> <span class="token boolean">true</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+  <span class="token comment">// Convert canvas to image</span>
+  <span class="token keyword">const</span> imgData <span class="token operator">=</span> canvas<span class="token punctuation">.</span><span class="token function">toDataURL</span><span class="token punctuation">(</span><span class="token string">'image/png'</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+  <span class="token comment">// Calculate PDF dimensions</span>
+  <span class="token keyword">const</span> pdfWidth <span class="token operator">=</span> canvas<span class="token punctuation">.</span>width <span class="token operator">*</span> <span class="token number">0.264583</span><span class="token punctuation">;</span> <span class="token comment">// Convert px to mm</span>
+  <span class="token keyword">const</span> pdfHeight <span class="token operator">=</span> canvas<span class="token punctuation">.</span>height <span class="token operator">*</span> <span class="token number">0.264583</span><span class="token punctuation">;</span>
+  
+  <span class="token comment">// Create PDF</span>
+  <span class="token keyword">const</span> pdf <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">jsPDF</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    <span class="token literal-property property">orientation</span><span class="token operator">:</span> pdfWidth <span class="token operator">&gt;</span> pdfHeight <span class="token operator">?</span> <span class="token string">'landscape'</span> <span class="token operator">:</span> <span class="token string">'portrait'</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">unit</span><span class="token operator">:</span> <span class="token string">'mm'</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">format</span><span class="token operator">:</span> <span class="token punctuation">[</span>pdfWidth<span class="token punctuation">,</span> pdfHeight<span class="token punctuation">]</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+  pdf<span class="token punctuation">.</span><span class="token function">addImage</span><span class="token punctuation">(</span>imgData<span class="token punctuation">,</span> <span class="token string">'PNG'</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> pdfWidth<span class="token punctuation">,</span> pdfHeight<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  pdf<span class="token punctuation">.</span><span class="token function">save</span><span class="token punctuation">(</span><span class="token string">'document.pdf'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span></pre></div><h2>3. Using Puppeteer (Server-side)</h2><p class="ds-markdown-paragraph">For even better quality, use Puppeteer (Node.js):</p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token keyword">const</span> puppeteer <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'puppeteer'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">async</span> <span class="token keyword">function</span> <span class="token function">generatePDF</span><span class="token punctuation">(</span><span class="token parameter">url<span class="token punctuation">,</span> outputPath</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> browser <span class="token operator">=</span> <span class="token keyword">await</span> puppeteer<span class="token punctuation">.</span><span class="token function">launch</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">const</span> page <span class="token operator">=</span> <span class="token keyword">await</span> browser<span class="token punctuation">.</span><span class="token function">newPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+  <span class="token keyword">await</span> page<span class="token punctuation">.</span><span class="token function">goto</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token literal-property property">waitUntil</span><span class="token operator">:</span> <span class="token string">'networkidle0'</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+  <span class="token keyword">await</span> page<span class="token punctuation">.</span><span class="token function">pdf</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    <span class="token literal-property property">path</span><span class="token operator">:</span> outputPath<span class="token punctuation">,</span>
+    <span class="token literal-property property">format</span><span class="token operator">:</span> <span class="token string">'A4'</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">printBackground</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">margin</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token literal-property property">top</span><span class="token operator">:</span> <span class="token string">'20mm'</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">right</span><span class="token operator">:</span> <span class="token string">'20mm'</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">bottom</span><span class="token operator">:</span> <span class="token string">'20mm'</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">left</span><span class="token operator">:</span> <span class="token string">'20mm'</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">await</span> browser<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token function">generatePDF</span><span class="token punctuation">(</span><span class="token string">'https://example.com'</span><span class="token punctuation">,</span> <span class="token string">'output.pdf'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></pre></div><h2>Best Practices for Preserving Styles</h2><ol start="1"><li><p class="ds-markdown-paragraph"><strong>Explicitly set all fonts</strong>:</p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token selector">*</span> <span class="token punctuation">{</span>
+  <span class="token property">font-family</span><span class="token punctuation">:</span> <span class="token string">'Arial'</span><span class="token punctuation">,</span> sans-serif <span class="token important">!important</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></pre></div></li><li><p class="ds-markdown-paragraph"><strong>Use print media queries</strong>:</p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token atrule"><span class="token rule">@media</span> print</span> <span class="token punctuation">{</span>
+  <span class="token selector">.no-print</span> <span class="token punctuation">{</span> <span class="token property">display</span><span class="token punctuation">:</span> none <span class="token important">!important</span><span class="token punctuation">;</span> <span class="token punctuation">}</span>
+  <span class="token selector">body</span> <span class="token punctuation">{</span> <span class="token property">background</span><span class="token punctuation">:</span> white <span class="token important">!important</span><span class="token punctuation">;</span> <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></pre></div></li><li><p class="ds-markdown-paragraph"><strong>Handle responsive elements</strong>:</p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token atrule"><span class="token rule">@page</span></span> <span class="token punctuation">{</span>
+  <span class="token property">size</span><span class="token punctuation">:</span> A4<span class="token punctuation">;</span>
+  <span class="token property">margin</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span>
+<span class="token punctuation">}</span></pre></div></li><li><p class="ds-markdown-paragraph"><strong>Force background colors/images</strong>:</p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token property">-webkit-print-color-adjust</span><span class="token punctuation">:</span> exact <span class="token important">!important</span><span class="token punctuation">;</span>
+<span class="token property">print-color-adjust</span><span class="token punctuation">:</span> exact <span class="token important">!important</span><span class="token punctuation">;</span></pre></div></li><li><p class="ds-markdown-paragraph"><strong>For Chrome extensions</strong>, you'll need to:</p><ul><li><p class="ds-markdown-paragraph">Include the library in your extension bundle</p></li><li><p class="ds-markdown-paragraph">Add the library to web_accessible_resources in manifest.json</p></li><li><p class="ds-markdown-paragraph">Load it dynamically as shown in my previous response</p></li></ul></li></ol><h2>Troubleshooting Common Issues</h2><ol start="1"><li><p class="ds-markdown-paragraph"><strong>Missing styles</strong>:</p><ul><li><p class="ds-markdown-paragraph">Wait for all resources to load before generating PDF</p></li><li><p class="ds-markdown-paragraph">Use <code>window.onload</code> or similar events</p></li></ul></li><li><p class="ds-markdown-paragraph"><strong>Blurry text</strong>:</p><ul><li><p class="ds-markdown-paragraph">Increase the scale factor (2x or 3x)</p></li><li><p class="ds-markdown-paragraph">Set <code>letterRendering: true</code> in html2canvas</p></li></ul></li><li><p class="ds-markdown-paragraph"><strong>Cross-origin issues</strong>:</p><ul><li><p class="ds-markdown-paragraph">Enable <code>useCORS</code> and <code>allowTaint</code></p></li><li><p class="ds-markdown-paragraph">Consider proxying external resources</p></li></ul></li><li><p class="ds-markdown-paragraph"><strong>Large PDFs</strong>:</p><ul><li><p class="ds-markdown-paragraph">Split content into multiple pages</p></li><li><p class="ds-markdown-paragraph">Use <code>page-break-inside: avoid</code> in CSS</p></li></ul></li></ol><p class="ds-markdown-paragraph">Would you like me to elaborate on any specific aspect of these PDF generation techniques?</p></div><div class="ds-flex" style="margin-top: 12px; height: 20px; margin-bottom: 20px; align-items: center; gap: 10px;"><div class="ds-flex _965abe9" style="align-items: center; gap: 16px;"><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div></div><div style="flex: 1 1 0%;"></div></div></div><div class="_9663006"><div class="fbb737a4">explain to me an global pandemic, use as much explanation as you can</div><div class="e13328ad _3a26104"><div class="_425ea0b"><div class="ds-flex _78e0558" style="align-items: flex-end; gap: 0px;"><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px; margin-left: 14px; opacity: 1;"></div></div></div></div></div><div class="_4f9bf79 _43c05b5"><div class="_7eb2358 _58dfa60"></div><div class="ds-markdown ds-markdown--block" style="--ds-md-zoom: 1.143;"><h1><strong>Understanding Global Pandemics: A Comprehensive Explanation</strong></h1><p class="ds-markdown-paragraph">A <strong>global pandemic</strong> is an outbreak of an infectious disease that spreads across multiple countries or continents, affecting a large number of people. Unlike <strong>epidemics</strong> (which are confined to a specific region), pandemics have worldwide reach, often causing significant health, economic, and social disruptions.</p><hr><h2><strong>1. What Defines a Pandemic?</strong></h2><p class="ds-markdown-paragraph">A disease outbreak becomes a pandemic when:</p><ul><li><p class="ds-markdown-paragraph">It is <strong>new or re-emerging</strong> (e.g., a novel virus like COVID-19).</p></li><li><p class="ds-markdown-paragraph">It <strong>spreads easily</strong> (high human-to-human transmission).</p></li><li><p class="ds-markdown-paragraph">It affects <strong>multiple countries or continents</strong>.</p></li><li><p class="ds-markdown-paragraph">It causes <strong>widespread illness or death</strong>.</p></li></ul><h3><strong>Examples of Historical Pandemics:</strong></h3><ul><li><p class="ds-markdown-paragraph"><strong>Black Death (1347–1351)</strong> – Bubonic plague killed ~75–200 million people.</p></li><li><p class="ds-markdown-paragraph"><strong>Spanish Flu (1918–1919)</strong> – H1N1 influenza killed ~50 million.</p></li><li><p class="ds-markdown-paragraph"><strong>HIV/AIDS (1981–present)</strong> – Ongoing, with ~40 million deaths.</p></li><li><p class="ds-markdown-paragraph"><strong>COVID-19 (2019–present)</strong> – Caused by SARS-CoV-2, over 7 million deaths.</p></li></ul><hr><h2><strong>2. How Pandemics Spread</strong></h2><p class="ds-markdown-paragraph">Pandemics typically follow these stages:</p><ol start="1"><li><p class="ds-markdown-paragraph"><strong>Animal-to-Human Transmission (Spillover Event)</strong></p><ul><li><p class="ds-markdown-paragraph">Many pandemics originate in animals (zoonotic diseases).</p></li><li><p class="ds-markdown-paragraph">Examples: COVID-19 (possibly bats), HIV (chimpanzees), H1N1 (pigs).</p></li></ul></li><li><p class="ds-markdown-paragraph"><strong>Localized Outbreak</strong></p><ul><li><p class="ds-markdown-paragraph">The disease spreads in a small region (e.g., Wuhan for COVID-19).</p></li></ul></li><li><p class="ds-markdown-paragraph"><strong>Community Spread</strong></p><ul><li><p class="ds-markdown-paragraph">Human-to-human transmission accelerates.</p></li></ul></li><li><p class="ds-markdown-paragraph"><strong>Epidemic (Regional Spread)</strong></p><ul><li><p class="ds-markdown-paragraph">The disease spreads across cities or countries.</p></li></ul></li><li><p class="ds-markdown-paragraph"><strong>Pandemic (Global Spread)</strong></p><ul><li><p class="ds-markdown-paragraph">The WHO declares a pandemic when multiple continents are affected.</p></li></ul></li></ol><h3><strong>Transmission Routes:</strong></h3><ul><li><p class="ds-markdown-paragraph"><strong>Respiratory droplets</strong> (COVID-19, flu)</p></li><li><p class="ds-markdown-paragraph"><strong>Direct contact</strong> (HIV, Ebola)</p></li><li><p class="ds-markdown-paragraph"><strong>Contaminated surfaces</strong> (Norovirus)</p></li><li><p class="ds-markdown-paragraph"><strong>Vector-borne</strong> (Mosquitoes for Zika, Malaria)</p></li></ul><hr><h2><strong>3. Factors That Accelerate Pandemics</strong></h2><h3><strong>A. Globalization &amp; Travel</strong></h3><ul><li><p class="ds-markdown-paragraph">Air travel allows viruses to spread globally in <strong>days</strong> (COVID-19 reached 100+ countries in 3 months).</p></li><li><p class="ds-markdown-paragraph">Urbanization increases close human contact.</p></li></ul><h3><strong>B. Weak Healthcare Systems</strong></h3><ul><li><p class="ds-markdown-paragraph">Countries with poor medical infrastructure struggle to contain outbreaks.</p></li></ul><h3><strong>C. Vaccine Hesitancy &amp; Misinformation</strong></h3><ul><li><p class="ds-markdown-paragraph">Anti-vaccine movements slow herd immunity (e.g., measles resurgence).</p></li></ul><h3><strong>D. Climate Change</strong></h3><ul><li><p class="ds-markdown-paragraph">Rising temperatures expand habitats for disease-carrying mosquitoes (e.g., Dengue, Zika).</p></li></ul><h3><strong>E. Animal-Human Encroachment</strong></h3><ul><li><p class="ds-markdown-paragraph">Deforestation and wildlife trade increase spillover risks (e.g., Ebola from bushmeat).</p></li></ul><hr><h2><strong>4. The Impact of Pandemics</strong></h2><h3><strong>A. Health Consequences</strong></h3><ul><li><p class="ds-markdown-paragraph"><strong>High death tolls</strong> (COVID-19 killed more than WWI in some countries).</p></li><li><p class="ds-markdown-paragraph"><strong>Overwhelmed hospitals</strong> (shortages of beds, ventilators, doctors).</p></li><li><p class="ds-markdown-paragraph"><strong>Long-term health effects</strong> (Long COVID, post-viral syndromes).</p></li></ul><h3><strong>B. Economic Disruptions</strong></h3><ul><li><p class="ds-markdown-paragraph"><strong>Stock market crashes</strong> (2020 saw the fastest drop in history).</p></li><li><p class="ds-markdown-paragraph"><strong>Supply chain breakdowns</strong> (shortages of food, electronics, medicine).</p></li><li><p class="ds-markdown-paragraph"><strong>Mass unemployment</strong> (lockdowns closed businesses).</p></li></ul><h3><strong>C. Social &amp; Psychological Effects</strong></h3><ul><li><p class="ds-markdown-paragraph"><strong>Lockdowns &amp; isolation</strong> led to mental health crises (depression, anxiety).</p></li><li><p class="ds-markdown-paragraph"><strong>Stigma &amp; discrimination</strong> (e.g., anti-Asian hate during COVID-19).</p></li><li><p class="ds-markdown-paragraph"><strong>Education disruptions</strong> (school closures affected 1.6 billion students in 2020).</p></li></ul><hr><h2><strong>5. How Governments &amp; Organizations Respond</strong></h2><h3><strong>A. Containment Measures</strong></h3><ul><li><p class="ds-markdown-paragraph"><strong>Quarantines &amp; lockdowns</strong> (China’s strict COVID lockdowns).</p></li><li><p class="ds-markdown-paragraph"><strong>Travel bans</strong> (U.S. restricted flights from Europe in 2020).</p></li><li><p class="ds-markdown-paragraph"><strong>Contact tracing</strong> (South Korea used phone data to track infections).</p></li></ul><h3><strong>B. Medical Responses</strong></h3><ul><li><p class="ds-markdown-paragraph"><strong>Vaccine development</strong> (COVID-19 vaccines were developed in record time).</p></li><li><p class="ds-markdown-paragraph"><strong>Antiviral treatments</strong> (Paxlovid for COVID-19, Tamiflu for flu).</p></li><li><p class="ds-markdown-paragraph"><strong>Public health campaigns</strong> (mask mandates, handwashing).</p></li></ul><h3><strong>C. Global Coordination</strong></h3><ul><li><p class="ds-markdown-paragraph"><strong>World Health Organization (WHO)</strong> declares pandemics and advises policies.</p></li><li><p class="ds-markdown-paragraph"><strong>COVAX</strong> distributed COVID vaccines to poorer countries.</p></li></ul><hr><h2><strong>6. Can We Prevent Future Pandemics?</strong></h2><h3><strong>A. Early Detection Systems</strong></h3><ul><li><p class="ds-markdown-paragraph">AI-powered disease surveillance (e.g., tracking outbreaks via social media).</p></li><li><p class="ds-markdown-paragraph">Faster genetic sequencing (identifying new viruses quickly).</p></li></ul><h3><strong>B. Better Preparedness</strong></h3><ul><li><p class="ds-markdown-paragraph">Stockpiling medical supplies (masks, ventilators).</p></li><li><p class="ds-markdown-paragraph">Training healthcare workers for surge capacity.</p></li></ul><h3><strong>C. Reducing Zoonotic Risks</strong></h3><ul><li><p class="ds-markdown-paragraph">Regulating wildlife markets.</p></li><li><p class="ds-markdown-paragraph">Monitoring deforestation and animal migration.</p></li></ul><h3><strong>D. Strengthening Global Cooperation</strong></h3><ul><li><p class="ds-markdown-paragraph">Sharing vaccine patents.</p></li><li><p class="ds-markdown-paragraph">Improving WHO funding and authority.</p></li></ul><hr><h2><strong>7. The Next Pandemic: What Experts Fear</strong></h2><ul><li><p class="ds-markdown-paragraph"><strong>Disease X</strong> – WHO’s term for an unknown future pathogen.</p></li><li><p class="ds-markdown-paragraph"><strong>Antibiotic-resistant bacteria</strong> (could make infections untreatable).</p></li><li><p class="ds-markdown-paragraph"><strong>Climate-driven pandemics</strong> (melting permafrost may release ancient viruses).</p></li></ul><hr><h3><strong>Final Thoughts</strong></h3><p class="ds-markdown-paragraph">Pandemics are <strong>inevitable</strong>, but their impact can be reduced through <strong>science, preparedness, and global cooperation</strong>. COVID-19 was a wake-up call—will we be ready for the next one?</p><p class="ds-markdown-paragraph">Would you like a deeper dive into any specific aspect (e.g., vaccine development, economic impacts, historical comparisons)?</p></div><div class="ds-flex" style="margin-top: 12px; height: 20px; margin-bottom: 20px; align-items: center; gap: 10px;"><div class="ds-flex _965abe9" style="align-items: center; gap: 16px;"><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div></div><div style="flex: 1 1 0%;"></div></div></div><div class="_9663006"><div class="fbb737a4">create an script for converting web page into with html2pdf.js but make sure that are text are good wrapped</div><div class="e13328ad _3a26104"><div class="_425ea0b"><div class="ds-flex _78e0558" style="align-items: flex-end; gap: 0px;"><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px; margin-left: 14px; opacity: 1;"></div></div></div></div></div><div class="_4f9bf79 _43c05b5"><div class="_7eb2358 _58dfa60"></div><div class="ds-markdown ds-markdown--block" style="--ds-md-zoom: 1.143;"><h1>HTML to PDF Conversion Script with Proper Text Wrapping</h1><p class="ds-markdown-paragraph">Here's a comprehensive script using html2pdf.js that ensures proper text wrapping in the generated PDF:</p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>viewport<span class="token punctuation">"</span></span> <span class="token attr-name">content</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>width=device-width, initial-scale=1.0<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>Web Page to PDF Converter<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token script"></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span><span class="token punctuation">&gt;</span></span><span class="token style"><span class="token language-css">
+        <span class="token comment">/* Styles to ensure proper text wrapping in source and PDF */</span>
+        <span class="token selector">body</span> <span class="token punctuation">{</span>
+            <span class="token property">font-family</span><span class="token punctuation">:</span> Arial<span class="token punctuation">,</span> sans-serif<span class="token punctuation">;</span>
+            <span class="token property">line-height</span><span class="token punctuation">:</span> 1.6<span class="token punctuation">;</span>
+            <span class="token property">color</span><span class="token punctuation">:</span> #333<span class="token punctuation">;</span>
+            <span class="token property">max-width</span><span class="token punctuation">:</span> 100%<span class="token punctuation">;</span>
+            <span class="token property">overflow-x</span><span class="token punctuation">:</span> hidden<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token selector">.content-container</span> <span class="token punctuation">{</span>
+            <span class="token property">width</span><span class="token punctuation">:</span> 100%<span class="token punctuation">;</span>
+            <span class="token property">max-width</span><span class="token punctuation">:</span> 800px<span class="token punctuation">;</span>
+            <span class="token property">margin</span><span class="token punctuation">:</span> 0 auto<span class="token punctuation">;</span>
+            <span class="token property">padding</span><span class="token punctuation">:</span> 20px<span class="token punctuation">;</span>
+            <span class="token property">box-sizing</span><span class="token punctuation">:</span> border-box<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token selector">.text-content</span> <span class="token punctuation">{</span>
+            <span class="token property">word-wrap</span><span class="token punctuation">:</span> break-word<span class="token punctuation">;</span>
+            <span class="token property">overflow-wrap</span><span class="token punctuation">:</span> break-word<span class="token punctuation">;</span>
+            <span class="token property">hyphens</span><span class="token punctuation">:</span> auto<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token selector">.avoid-break</span> <span class="token punctuation">{</span>
+            <span class="token property">page-break-inside</span><span class="token punctuation">:</span> avoid<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token atrule"><span class="token rule">@media</span> print</span> <span class="token punctuation">{</span>
+            <span class="token selector">body</span> <span class="token punctuation">{</span>
+                <span class="token property">background</span><span class="token punctuation">:</span> white <span class="token important">!important</span><span class="token punctuation">;</span>
+                <span class="token property">color</span><span class="token punctuation">:</span> black <span class="token important">!important</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token selector">.no-print</span> <span class="token punctuation">{</span>
+                <span class="token property">display</span><span class="token punctuation">:</span> none <span class="token important">!important</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token comment">/* Button styling */</span>
+        <span class="token selector">#pdf-button</span> <span class="token punctuation">{</span>
+            <span class="token property">background-color</span><span class="token punctuation">:</span> #4CAF50<span class="token punctuation">;</span>
+            <span class="token property">color</span><span class="token punctuation">:</span> white<span class="token punctuation">;</span>
+            <span class="token property">border</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span>
+            <span class="token property">padding</span><span class="token punctuation">:</span> 12px 20px<span class="token punctuation">;</span>
+            <span class="token property">text-align</span><span class="token punctuation">:</span> center<span class="token punctuation">;</span>
+            <span class="token property">text-decoration</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span>
+            <span class="token property">display</span><span class="token punctuation">:</span> inline-block<span class="token punctuation">;</span>
+            <span class="token property">font-size</span><span class="token punctuation">:</span> 16px<span class="token punctuation">;</span>
+            <span class="token property">margin</span><span class="token punctuation">:</span> 20px 0<span class="token punctuation">;</span>
+            <span class="token property">cursor</span><span class="token punctuation">:</span> pointer<span class="token punctuation">;</span>
+            <span class="token property">border-radius</span><span class="token punctuation">:</span> 4px<span class="token punctuation">;</span>
+            <span class="token property">transition</span><span class="token punctuation">:</span> background-color 0.3s<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token selector">#pdf-button:hover</span> <span class="token punctuation">{</span>
+            <span class="token property">background-color</span><span class="token punctuation">:</span> #45a049<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token selector">#status-message</span> <span class="token punctuation">{</span>
+            <span class="token property">margin</span><span class="token punctuation">:</span> 10px 0<span class="token punctuation">;</span>
+            <span class="token property">padding</span><span class="token punctuation">:</span> 10px<span class="token punctuation">;</span>
+            <span class="token property">border-radius</span><span class="token punctuation">:</span> 4px<span class="token punctuation">;</span>
+            <span class="token property">display</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token selector">.success</span> <span class="token punctuation">{</span>
+            <span class="token property">background-color</span><span class="token punctuation">:</span> #dff0d8<span class="token punctuation">;</span>
+            <span class="token property">color</span><span class="token punctuation">:</span> #3c763d<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token selector">.error</span> <span class="token punctuation">{</span>
+            <span class="token property">background-color</span><span class="token punctuation">:</span> #f2dede<span class="token punctuation">;</span>
+            <span class="token property">color</span><span class="token punctuation">:</span> #a94442<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>style</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>content-container<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>pdf-button<span class="token punctuation">"</span></span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>no-print<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Convert to PDF<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>status-message<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+        
+        <span class="token comment">&lt;!-- This is the content that will be converted to PDF --&gt;</span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>content-to-export<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Sample Document with Proper Text Wrapping<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>text-content<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>This is an example of how text will be properly wrapped in the PDF document. The html2pdf.js library will preserve the formatting and ensure that long paragraphs break appropriately at the end of lines. This prevents text from running off the page or being cut awkwardly.<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+            
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>avoid-break<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h2</span><span class="token punctuation">&gt;</span></span>Section With Avoided Page Breaks<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h2</span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>text-content<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>This section will try to stay together on the same page in the PDF output. The 'page-break-inside: avoid' CSS property helps keep related content together rather than splitting it across pages. This is particularly useful for tables, figures, or lists that shouldn't be broken.<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+            
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h2</span><span class="token punctuation">&gt;</span></span>Long Paragraph Example<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h2</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>text-content<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+            
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h2</span><span class="token punctuation">&gt;</span></span>List Example<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h2</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>text-content<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>This is a list item with some text that might wrap if it's too long for the line width in the PDF document.<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>text-content<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Another list item that demonstrates how text wrapping works with html2pdf.js when converting web content to PDF format.<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>text-content<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>The third item shows that all content maintains proper formatting during the conversion process.<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+        document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'pdf-button'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'click'</span><span class="token punctuation">,</span> generatePDF<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        
+        <span class="token keyword">function</span> <span class="token function">generatePDF</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">const</span> element <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'content-to-export'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">const</span> statusMessage <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'status-message'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            
+            <span class="token comment">// Reset status message</span>
+            statusMessage<span class="token punctuation">.</span>style<span class="token punctuation">.</span>display <span class="token operator">=</span> <span class="token string">'none'</span><span class="token punctuation">;</span>
+            
+            <span class="token comment">// Show loading state</span>
+            <span class="token keyword">const</span> button <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'pdf-button'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">const</span> originalText <span class="token operator">=</span> button<span class="token punctuation">.</span>textContent<span class="token punctuation">;</span>
+            button<span class="token punctuation">.</span>textContent <span class="token operator">=</span> <span class="token string">'Generating PDF...'</span><span class="token punctuation">;</span>
+            button<span class="token punctuation">.</span>disabled <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+            
+            <span class="token comment">// PDF options for optimal text wrapping</span>
+            <span class="token keyword">const</span> opt <span class="token operator">=</span> <span class="token punctuation">{</span>
+                <span class="token literal-property property">margin</span><span class="token operator">:</span>       <span class="token number">15</span><span class="token punctuation">,</span>
+                <span class="token literal-property property">filename</span><span class="token operator">:</span>     <span class="token string">'document_'</span> <span class="token operator">+</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toISOString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">slice</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">'.pdf'</span><span class="token punctuation">,</span>
+                <span class="token literal-property property">image</span><span class="token operator">:</span>       <span class="token punctuation">{</span> 
+                    <span class="token literal-property property">type</span><span class="token operator">:</span> <span class="token string">'jpeg'</span><span class="token punctuation">,</span> 
+                    <span class="token literal-property property">quality</span><span class="token operator">:</span> <span class="token number">0.98</span> 
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token literal-property property">html2canvas</span><span class="token operator">:</span> <span class="token punctuation">{</span> 
+                    <span class="token literal-property property">scale</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span>               <span class="token comment">// Higher scale for better quality</span>
+                    <span class="token literal-property property">letterRendering</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>   <span class="token comment">// Better text rendering</span>
+                    <span class="token literal-property property">useCORS</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>          <span class="token comment">// Handle external resources</span>
+                    <span class="token literal-property property">allowTaint</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>       <span class="token comment">// Allow tainted canvas</span>
+                    <span class="token literal-property property">scrollX</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">scrollY</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">windowWidth</span><span class="token operator">:</span> element<span class="token punctuation">.</span>scrollWidth<span class="token punctuation">,</span>
+                    <span class="token literal-property property">windowHeight</span><span class="token operator">:</span> element<span class="token punctuation">.</span>scrollHeight
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token literal-property property">jsPDF</span><span class="token operator">:</span>       <span class="token punctuation">{</span> 
+                    <span class="token literal-property property">unit</span><span class="token operator">:</span> <span class="token string">'mm'</span><span class="token punctuation">,</span> 
+                    <span class="token literal-property property">format</span><span class="token operator">:</span> <span class="token string">'a4'</span><span class="token punctuation">,</span> 
+                    <span class="token literal-property property">orientation</span><span class="token operator">:</span> <span class="token string">'portrait'</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">hotfixes</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"px_scaling"</span><span class="token punctuation">]</span>  <span class="token comment">// Fix px scaling issues</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token comment">// Ensure proper page breaks</span>
+                <span class="token literal-property property">pagebreak</span><span class="token operator">:</span> <span class="token punctuation">{</span> 
+                    <span class="token literal-property property">mode</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'avoid-all'</span><span class="token punctuation">,</span> <span class="token string">'css'</span><span class="token punctuation">,</span> <span class="token string">'legacy'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">before</span><span class="token operator">:</span> <span class="token string">'.page-break'</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span><span class="token punctuation">;</span>
+            
+            <span class="token comment">// Generate PDF</span>
+            <span class="token function">html2pdf</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>opt<span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">from</span><span class="token punctuation">(</span>element<span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">toPdf</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'pdf'</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">pdf</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token comment">// Additional PDF settings for text wrapping</span>
+                    <span class="token keyword">const</span> totalPages <span class="token operator">=</span> pdf<span class="token punctuation">.</span>internal<span class="token punctuation">.</span><span class="token function">getNumberOfPages</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    
+                    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> totalPages<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                        pdf<span class="token punctuation">.</span><span class="token function">setPage</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                        pdf<span class="token punctuation">.</span><span class="token function">setFontSize</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                        pdf<span class="token punctuation">.</span><span class="token function">setTextColor</span><span class="token punctuation">(</span><span class="token number">150</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                        pdf<span class="token punctuation">.</span><span class="token function">text</span><span class="token punctuation">(</span><span class="token string">'Page '</span> <span class="token operator">+</span> i <span class="token operator">+</span> <span class="token string">' of '</span> <span class="token operator">+</span> totalPages<span class="token punctuation">,</span> pdf<span class="token punctuation">.</span>internal<span class="token punctuation">.</span>pageSize<span class="token punctuation">.</span><span class="token function">getWidth</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">20</span><span class="token punctuation">,</span> pdf<span class="token punctuation">.</span>internal<span class="token punctuation">.</span>pageSize<span class="token punctuation">.</span><span class="token function">getHeight</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token punctuation">}</span>
+                    
+                    <span class="token keyword">return</span> pdf<span class="token punctuation">.</span><span class="token function">save</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+                    <span class="token comment">// Success message</span>
+                    statusMessage<span class="token punctuation">.</span>textContent <span class="token operator">=</span> <span class="token string">'PDF generated successfully!'</span><span class="token punctuation">;</span>
+                    statusMessage<span class="token punctuation">.</span>className <span class="token operator">=</span> <span class="token string">'success'</span><span class="token punctuation">;</span>
+                    statusMessage<span class="token punctuation">.</span>style<span class="token punctuation">.</span>display <span class="token operator">=</span> <span class="token string">'block'</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">catch</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">error</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+                    <span class="token comment">// Error message</span>
+                    console<span class="token punctuation">.</span><span class="token function">error</span><span class="token punctuation">(</span><span class="token string">'PDF generation error:'</span><span class="token punctuation">,</span> error<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    statusMessage<span class="token punctuation">.</span>textContent <span class="token operator">=</span> <span class="token string">'Error generating PDF: '</span> <span class="token operator">+</span> error<span class="token punctuation">.</span>message<span class="token punctuation">;</span>
+                    statusMessage<span class="token punctuation">.</span>className <span class="token operator">=</span> <span class="token string">'error'</span><span class="token punctuation">;</span>
+                    statusMessage<span class="token punctuation">.</span>style<span class="token punctuation">.</span>display <span class="token operator">=</span> <span class="token string">'block'</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">finally</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+                    <span class="token comment">// Reset button</span>
+                    button<span class="token punctuation">.</span>textContent <span class="token operator">=</span> originalText<span class="token punctuation">;</span>
+                    button<span class="token punctuation">.</span>disabled <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span></pre></div><h2>Key Features for Proper Text Wrapping:</h2><ol start="1"><li><p class="ds-markdown-paragraph"><strong>CSS Text Control</strong>:</p><ul><li><p class="ds-markdown-paragraph"><code>word-wrap: break-word</code> and <code>overflow-wrap: break-word</code> ensure long words break properly</p></li><li><p class="ds-markdown-paragraph"><code>hyphens: auto</code> enables automatic hyphenation where needed</p></li><li><p class="ds-markdown-paragraph">Consistent <code>line-height</code> improves readability</p></li></ul></li><li><p class="ds-markdown-paragraph"><strong>HTML2PDF Configuration</strong>:</p><ul><li><p class="ds-markdown-paragraph"><code>letterRendering: true</code> for better text quality</p></li><li><p class="ds-markdown-paragraph">Proper scaling (<code>scale: 2</code>) for sharper text</p></li><li><p class="ds-markdown-paragraph">Page break controls to prevent awkward splits</p></li></ul></li><li><p class="ds-markdown-paragraph"><strong>Layout Preservation</strong>:</p><ul><li><p class="ds-markdown-paragraph">Fixed-width container (<code>max-width: 800px</code>) for consistent PDF layout</p></li><li><p class="ds-markdown-paragraph"><code>page-break-inside: avoid</code> for keeping related content together</p></li><li><p class="ds-markdown-paragraph">Proper margin settings for printable area</p></li></ul></li><li><p class="ds-markdown-paragraph"><strong>Error Handling</strong>:</p><ul><li><p class="ds-markdown-paragraph">Loading states and status messages</p></li><li><p class="ds-markdown-paragraph">Comprehensive error catching</p></li><li><p class="ds-markdown-paragraph">PDF metadata and page numbers</p></li></ul></li><li><p class="ds-markdown-paragraph"><strong>Responsive Design</strong>:</p><ul><li><p class="ds-markdown-paragraph">Works with dynamic content</p></li><li><p class="ds-markdown-paragraph">Handles long paragraphs and lists properly</p></li><li><p class="ds-markdown-paragraph">Maintains structure across page breaks</p></li></ul></li></ol><h2>How to Use:</h2><ol start="1"><li><p class="ds-markdown-paragraph">Copy this entire HTML file</p></li><li><p class="ds-markdown-paragraph">Replace the <code>#content-to-export</code> div with your actual content</p></li><li><p class="ds-markdown-paragraph">Adjust the styling as needed for your specific content</p></li><li><p class="ds-markdown-paragraph">Test with different content lengths to ensure proper wrapping</p></li></ol><p class="ds-markdown-paragraph">The script will generate a PDF that maintains proper text formatting, with words breaking appropriately at line endings and content flowing naturally between pages.</p></div><div class="ds-flex" style="margin-top: 12px; height: 20px; margin-bottom: 20px; align-items: center; gap: 10px;"><div class="ds-flex _965abe9" style="align-items: center; gap: 16px;"><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div></div><div style="flex: 1 1 0%;"></div></div></div><div class="_9663006"><div class="fbb737a4">write me as many text fomat and information format as you can ascii, images, code script, every format you can</div><div class="e13328ad _3a26104"><div class="_425ea0b"><div class="ds-flex _78e0558" style="align-items: flex-end; gap: 0px;"><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px; margin-left: 14px; opacity: 1;"></div></div></div></div></div><div class="_4f9bf79 _43c05b5"><div class="_7eb2358 _58dfa60"></div><div class="_48edb25"><div class="_58a6d71 _19db599">Thought for 15 seconds</div><div class="e1675d8b"><div class="_9ecc93a"></div>We are going to create a comprehensive example that includes various text formats and information formats.<div style="height: 6px;"></div> The goal is to demonstrate how different types of content can be included in an HTML document and then converted to PDF with proper formatting.<div style="height: 6px;"></div><div style="height: 6px;"></div> We'll include:<div style="height: 6px;"></div> 1. Headings (h1, h2, h3, etc.)<div style="height: 6px;"></div> 2. Paragraphs with different alignments and styles<div style="height: 6px;"></div> 3. Lists (ordered and unordered)<div style="height: 6px;"></div> 4. Tables<div style="height: 6px;"></div> 5. Code blocks (with syntax highlighting if possible, but at least monospace)<div style="height: 6px;"></div> 6. Blockquotes<div style="height: 6px;"></div> 7. Images (with captions)<div style="height: 6px;"></div> 8. Horizontal rules<div style="height: 6px;"></div> 9. Preformatted text (like ASCII art)<div style="height: 6px;"></div>10. Links<div style="height: 6px;"></div>11. Bold, italic, underlined, and strikethrough text<div style="height: 6px;"></div>12. Subscript and superscript<div style="height: 6px;"></div>13. Definition lists<div style="height: 6px;"></div>14. Address and time<div style="height: 6px;"></div>15. Inline code<div style="height: 6px;"></div>16. Buttons and form elements (though they won't be interactive in PDF)<div style="height: 6px;"></div>17. Mathematical formulas (using MathJax or plain text)<div style="height: 6px;"></div>18. Icons (using Font Awesome or similar)<div style="height: 6px;"></div><div style="height: 6px;"></div> However, note that when converting to PDF, some interactive elements won't work, but we can show their static representation.<div style="height: 6px;"></div><div style="height: 6px;"></div> Since we are using html2pdf.js, which renders the HTML as an image and then puts it in a PDF, we must ensure that all content is visible and styled appropriately.<div style="height: 6px;"></div><div style="height: 6px;"></div> We'll create a sample document that includes all these elements.<div style="height: 6px;"></div><div style="height: 6px;"></div> Let's create the HTML structure:</div></div><div class="ds-markdown ds-markdown--block" style="--ds-md-zoom: 1.143;"><h1>Comprehensive Document Formatting Showcase</h1><p class="ds-markdown-paragraph">I'll create a comprehensive HTML document that demonstrates a wide variety of text formats and information structures. This showcase will include everything from ASCII art to code blocks to various text formatting techniques.</p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>viewport<span class="token punctuation">"</span></span> <span class="token attr-name">content</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>width=device-width, initial-scale=1.0<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>Information Format Showcase<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>link</span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>stylesheet<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token script"></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span><span class="token punctuation">&gt;</span></span>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, #ff8a00, #e52e71, #1a2a6c);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #eaeaea;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            color: #1a2a6c;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(45deg, #1a2a6c, #e52e71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-export {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            border: 1px solid #eaeaea;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            background: linear-gradient(45deg, #1a2a6c, #4a569d);
+            color: white;
+            padding: 15px 20px;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .card:nth-child(2) .card-header {
+            background: linear-gradient(45deg, #b21f1f, #e52e71);
+        }
+        
+        .card:nth-child(3) .card-header {
+            background: linear-gradient(45deg, #00b09b, #96c93d);
+        }
+        
+        .card:nth-child(4) .card-header {
+            background: linear-gradient(45deg, #ff8a00, #da1b60);
+        }
+        
+        .card:nth-child(5) .card-header {
+            background: linear-gradient(45deg, #654ea3, #da22ff);
+        }
+        
+        .card:nth-child(6) .card-header {
+            background: linear-gradient(45deg, #396afc, #2948ff);
+        }
+        
+        /* Text Formatting Styles */
+        .text-formatting {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .format-item {
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #1a2a6c;
+        }
+        
+        .format-item:nth-child(2n) {
+            border-left-color: #b21f1f;
+        }
+        
+        .bold { font-weight: bold; }
+        .italic { font-style: italic; }
+        .underline { text-decoration: underline; }
+        .strikethrough { text-decoration: line-through; }
+        .highlight { background-color: #fff9c4; padding: 0 3px; }
+        .superscript { vertical-align: super; font-size: 0.8em; }
+        .subscript { vertical-align: sub; font-size: 0.8em</pre></div></div><div class="ds-flex" style="margin-top: 12px; height: 20px; margin-bottom: 20px; align-items: center; gap: 10px;"><div class="ds-flex _965abe9" style="align-items: center; gap: 16px;"><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div></div><div style="flex: 1 1 0%;"></div></div></div><div class="_9663006"><div class="fbb737a4">no you didnt understand, you need to write all this by yourself, as typical answers, not as code</div><div class="e13328ad _3a26104"><div class="_425ea0b"><div class="ds-flex _78e0558 _0bbda35" style="align-items: flex-end; gap: 0px;"><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px; margin-left: 14px; opacity: 1;"></div></div></div></div></div><div class="_4f9bf79 d7dc56a8 _43c05b5"><div class="_7eb2358 _58dfa60"></div><div class="_48edb25"><div class="_58a6d71 _19db599">Thought for 19 seconds</div><div class="e1675d8b"><div class="_9ecc93a"></div>We are going to create a comprehensive document that showcases as many text and information formats as possible. This will be presented in a structured manner, suitable for conversion to PDF with proper formatting. We'll include:<div style="height: 6px;"></div><div style="height: 6px;"></div>1. **Text Formats**:<div style="height: 6px;"></div>   - Bold, Italic, Underline, Strikethrough<div style="height: 6px;"></div>   - Superscript, Subscript<div style="height: 6px;"></div>   - Highlighted text<div style="height: 6px;"></div>   - Different font styles and sizes<div style="height: 6px;"></div>   - Text alignment examples (left, center, right, justify)<div style="height: 6px;"></div>   - Headings (H1 to H6)<div style="height: 6px;"></div>   - Paragraphs with line breaks<div style="height: 6px;"></div>   - Blockquotes<div style="height: 6px;"></div>   - Abbreviations<div style="height: 6px;"></div>   - Code snippets<div style="height: 6px;"></div><div style="height: 6px;"></div>2. **Lists**:<div style="height: 6px;"></div>   - Ordered lists (various styles)<div style="height: 6px;"></div>   - Unordered lists (various bullet styles)<div style="height: 6px;"></div>   - Definition lists<div style="height: 6px;"></div><div style="height: 6px;"></div>3. **Tables**:<div style="height: 6px;"></div>   - Basic table<div style="height: 6px;"></div>   - Table with headers<div style="height: 6px;"></div>   - Table with colgroup and rowspan/colspan<div style="height: 6px;"></div><div style="height: 6px;"></div>4. **Images and Media**:<div style="height: 6px;"></div>   - Image with caption<div style="height: 6px;"></div>   - Figure with figcaption<div style="height: 6px;"></div><div style="height: 6px;"></div>5. **Special Content**:<div style="height: 6px;"></div>   - Mathematical formulas (using MathML or LaTeX representation)<div style="height: 6px;"></div>   - ASCII art<div style="height: 6px;"></div>   - QR code representation<div style="height: 6px;"></div>   - Flowcharts and diagrams (using ASCII or simple representations)<div style="height: 6px;"></div><div style="height: 6px;"></div>6. **Code and Script**:<div style="height: 6px;"></div>   - Inline code<div style="height: 6px;"></div>   - Code blocks in multiple languages (HTML, CSS, JavaScript, Python, etc.)<div style="height: 6px;"></div><div style="height: 6px;"></div>7. **Miscellaneous**:<div style="height: 6px;"></div>   - Horizontal rules<div style="height: 6px;"></div>   - Address format<div style="height: 6px;"></div>   - Preformatted text<div style="height: 6px;"></div>   - Buttons and interactive elements (though static in PDF)<div style="height: 6px;"></div>   - Icons (using Font Awesome or similar)<div style="height: 6px;"></div><div style="height: 6px;"></div>We'll structure the document in sections for clarity. Since the output should be in a format that can be converted to PDF with good text wrapping, we'll use appropriate CSS to ensure readability.<div style="height: 6px;"></div><div style="height: 6px;"></div>Note: We are writing this as a single HTML file that includes all styles and scripts.<div style="height: 6px;"></div><div style="height: 6px;"></div>Let's begin.</div></div><div class="ds-markdown ds-markdown--block" style="--ds-md-zoom: 1.143;"><h3>Comprehensive Text &amp; Information Formats Showcase</h3><h4>1. ASCII Art</h4><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre>  _____ _                 _     _ 
+ |_   _| |__   __ _ _ __ | | __| |
+   | | | '_ \ / _` | '_ \| |/ _` |
+   | | | | | | (_| | | | | | (_| |
+   |_| |_| |_|\__,_|_| |_|_|\__,_|</pre></div><h4>2. Plain Text Formatting</h4><ul><li><p class="ds-markdown-paragraph"><strong>Bold</strong>: <code>**Important Notice**</code></p></li><li><p class="ds-markdown-paragraph"><em>Italic</em>: <code>*Emphasized Point*</code></p></li><li><p class="ds-markdown-paragraph">~~Strikethrough~~: <code>~~Deprecated Info~~</code></p></li><li><p class="ds-markdown-paragraph">Underline: <code>_Critical Section_</code></p></li><li><p class="ds-markdown-paragraph"><code>Inline Code</code>: Enclosed in backticks</p></li><li><p class="ds-markdown-paragraph">H~2~O (Subscript)</p></li><li><p class="ds-markdown-paragraph">E = mc² (Superscript)</p></li></ul><h4>3. Tabular Data</h4><div class="markdown-table-wrapper"><table><thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Status</th></tr></thead><tbody><tr><td>1</td><td>John Smith</td><td>Developer</td><td>Active ✅</td></tr><tr><td>2</td><td>Jane Doe</td><td>Designer</td><td>On Leave 🏖️</td></tr><tr><td>3</td><td>Bob Lee</td><td>Manager</td><td>Inactive ❌</td></tr></tbody></table></div><h4>4. Code Blocks</h4><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token comment"># Python Fibonacci Sequence</span>
+<span class="token keyword">def</span> <span class="token function">fibonacci</span><span class="token punctuation">(</span>n<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    a<span class="token punctuation">,</span> b <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span>
+    <span class="token keyword">for</span> _ <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span>n<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">yield</span> a
+        a<span class="token punctuation">,</span> b <span class="token operator">=</span> b<span class="token punctuation">,</span> a <span class="token operator">+</span> b
+
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">list</span><span class="token punctuation">(</span>fibonacci<span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span></pre></div><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token comment">// JavaScript Fetch API</span>
+<span class="token keyword">async</span> <span class="token keyword">function</span> <span class="token function">fetchData</span><span class="token punctuation">(</span><span class="token parameter">url</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">try</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> response <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">fetch</span><span class="token punctuation">(</span>url<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token keyword">await</span> response<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span>error<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">error</span><span class="token punctuation">(</span><span class="token string">"Fetch error:"</span><span class="token punctuation">,</span> error<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></pre></div><h4>5. Mathematical Notation</h4><ul><li><p class="ds-markdown-paragraph">Quadratic Formula:<br><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mfrac><mrow><mo>−</mo><mi>b</mi><mo>±</mo><msqrt><mrow><msup><mi>b</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn><mi>a</mi><mi>c</mi></mrow></msqrt></mrow><mrow><mn>2</mn><mi>a</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.3845em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0395em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight">a</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight">b</span><span class="mbin mtight">±</span><span class="mord sqrt mtight"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9221em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mtight" style="padding-left:0.833em;"><span class="mord mtight"><span class="mord mathnormal mtight">b</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7463em;"><span style="top:-2.786em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mtight">4</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight">c</span></span></span><span style="top:-2.8821em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail mtight" style="min-width:0.853em;height:1.08em;"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1179em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></p></li><li><p class="ds-markdown-paragraph">Integral Calculus:<br><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mo>∫</mo><mi>a</mi><mi>b</mi></msubsup><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mtext> </mtext><mi>d</mi><mi>x</mi><mo>=</mo><mi>F</mi><mo stretchy="false">(</mo><mi>b</mi><mo stretchy="false">)</mo><mo>−</mo><mi>F</mi><mo stretchy="false">(</mo><mi>a</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\int_a^b f(x)\,dx = F(b) - F(a)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.3998em;vertical-align:-0.3558em;"></span><span class="mop"><span class="mop op-symbol small-op" style="margin-right:0.19445em;position:relative;top:-0.0006em;">∫</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.044em;"><span style="top:-2.3442em;margin-left:-0.1945em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">a</span></span></span><span style="top:-3.2579em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">b</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3558em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">d</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord mathnormal">b</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord mathnormal">a</span><span class="mclose">)</span></span></span></span></p></li></ul><h4>6. Structured Documents</h4><p class="ds-markdown-paragraph"><strong>Business Report Template</strong></p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre>TO: Management Team
+FROM: Analytics Department
+DATE: 2023-11-15
+SUBJECT: Q3 Performance Metrics
+
+1. EXECUTIVE SUMMARY
+• Revenue ▲ 12.5% YoY
+• Customer retention: 89.7%
+• New markets: Southeast Asia
+
+2. KEY METRICS
+[Bar Chart: Revenue Growth by Region]
+
+3. ACTION ITEMS
+- [ ] Expand cloud infrastructure
+- [X] Implement new CRM system
+- [ ] Hire 2 data scientists</pre></div><h4>7. Specialized Formats</h4><p class="ds-markdown-paragraph"><strong>Chemical Notation</strong></p><ul><li><p class="ds-markdown-paragraph">Reaction: 2H₂ + O₂ → 2H₂O</p></li><li><p class="ds-markdown-paragraph">Compound: CH₃CH₂OH (Ethanol)</p></li></ul><p class="ds-markdown-paragraph"><strong>Musical Notation</strong></p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre>| C   | G   | Am  | F   |
+| I   | V   | vi  | IV  |
+| 1...2...3...4... |</pre></div><h4>8. Diagram Representation</h4><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre>Flowchart:
+[Start] → [Input Data] → 
+          ↓             
+[Process] → [Decision?] → Yes → [Output] → [End]
+          ↓ No            
+          [Repeat]        </pre></div><h4>9. Structured Text Formats</h4><p class="ds-markdown-paragraph"><strong>YAML Configuration</strong></p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token key atrule">server</span><span class="token punctuation">:</span>
+  <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">8080</span>
+  <span class="token key atrule">environment</span><span class="token punctuation">:</span> production
+<span class="token key atrule">database</span><span class="token punctuation">:</span>
+  <span class="token key atrule">host</span><span class="token punctuation">:</span> db.example.com
+  <span class="token key atrule">user</span><span class="token punctuation">:</span> admin
+  <span class="token key atrule">tables</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> users
+    <span class="token punctuation">-</span> transactions</pre></div><p class="ds-markdown-paragraph"><strong>JSON Data</strong></p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token punctuation">{</span>
+  <span class="token property">"employee"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"Sarah Chen"</span><span class="token punctuation">,</span>
+    <span class="token property">"position"</span><span class="token operator">:</span> <span class="token string">"CTO"</span><span class="token punctuation">,</span>
+    <span class="token property">"skills"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token string">"AI/ML"</span><span class="token punctuation">,</span>
+      <span class="token string">"Cloud Architecture"</span><span class="token punctuation">,</span>
+      <span class="token string">"DevOps"</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"contact"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">"email"</span><span class="token operator">:</span> <span class="token string">"s.chen@company.com"</span><span class="token punctuation">,</span>
+      <span class="token property">"phone"</span><span class="token operator">:</span> <span class="token string">"+1-555-1234"</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></pre></div><h4>10. Visual Representations</h4><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre>Heatmap (Quarterly Sales):
+Q1: ████ 40%
+Q2: ███████ 70%
+Q3: ██████████ 100%
+Q4: ███ 30%
+
+Progress: [██████████░░░░] 60%</pre></div><h4>11. Specialized Technical Formats</h4><p class="ds-markdown-paragraph"><strong>Regular Expression</strong><br><code>/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/</code></p><p class="ds-markdown-paragraph"><strong>SQL Query</strong></p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token keyword">SELECT</span> employees<span class="token punctuation">.</span>name<span class="token punctuation">,</span> departments<span class="token punctuation">.</span>dept_name 
+<span class="token keyword">FROM</span> employees
+<span class="token keyword">JOIN</span> departments 
+  <span class="token keyword">ON</span> employees<span class="token punctuation">.</span>dept_id <span class="token operator">=</span> departments<span class="token punctuation">.</span>id
+<span class="token keyword">WHERE</span> hire_date <span class="token operator">&gt;</span> <span class="token string">'2020-01-01'</span>
+<span class="token keyword">ORDER</span> <span class="token keyword">BY</span> last_name <span class="token keyword">ASC</span><span class="token punctuation">;</span></pre></div><h4>12. Communication Formats</h4><p class="ds-markdown-paragraph"><strong>Email Template</strong></p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre>Subject: Meeting Confirmation - Project Phoenix
+
+Dear Team,
+
+When: November 20, 2023 @ 2:00-3:30 PM (EST)
+Where: Conference Room B / Zoom [link]
+
+Agenda:
+1. Q4 roadmap review
+2. Resource allocation
+3. Client demo preparation
+
+Please confirm attendance by EOD Friday.
+
+Best regards,
+Alex Johnson
+Project Lead</pre></div><h4>13. Scientific Notation</h4><ul><li><p class="ds-markdown-paragraph">Speed of Light: 2.998 × 10⁸ m/s</p></li><li><p class="ds-markdown-paragraph">Planck's Constant: 6.626 × 10⁻³⁴ J⋅s</p></li><li><p class="ds-markdown-paragraph">Avogadro's Number: 6.022 × 10²³ mol⁻¹</p></li></ul><h4>14. Typesetting Conventions</h4><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre>📚 BOOK FORMATTING
+Chapter 1: Introduction
+  1.1 Background............5
+  1.2 Problem Statement.....8
+  1.3 Objectives...........12
+
+✉️ LETTER FORMAT
+[Your Address]
+[City, ZIP Code]
+[Date]
+
+[Recipient Address]
+
+Dear [Name]:
+
+Body text...
+
+Sincerely,
+[Your Signature]
+[Typed Name]</pre></div><h4>15. Programming Language Syntax</h4><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token comment">// Rust ownership example</span>
+<span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> s1 <span class="token operator">=</span> <span class="token class-name">String</span><span class="token punctuation">::</span><span class="token function">from</span><span class="token punctuation">(</span><span class="token string">"hello"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">let</span> s2 <span class="token operator">=</span> s1<span class="token punctuation">;</span> <span class="token comment">// s1 is moved to s2</span>
+    
+    <span class="token comment">// println!("{}", s1); // This would cause error</span>
+    <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> s2<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Valid</span>
+<span class="token punctuation">}</span></pre></div><h4>16. Markdown Variants</h4><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token title important"><span class="token punctuation">#</span> Heading 1</span>
+<span class="token title important"><span class="token punctuation">##</span> Heading 2</span>
+<span class="token title important"><span class="token punctuation">###</span> Heading 3</span>
+
+<span class="token list punctuation">-</span> [x] Completed task
+<span class="token list punctuation">-</span> [ ] Pending task
+
+<span class="token blockquote punctuation">&gt;</span> Blockquote</pre></div><h4>17. Data Serialization</h4><p class="ds-markdown-paragraph"><strong>XML Example</strong></p><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>config</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>database</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>host</span><span class="token punctuation">&gt;</span></span>localhost<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>host</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>port</span><span class="token punctuation">&gt;</span></span>3306<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>port</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>username</span><span class="token punctuation">&gt;</span></span>root<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>username</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>database</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>settings</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>debug</span><span class="token punctuation">&gt;</span></span>true<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>debug</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>log_level</span><span class="token punctuation">&gt;</span></span>verbose<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>log_level</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>settings</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>config</span><span class="token punctuation">&gt;</span></span></pre></div><h4>18. Creative Formats</h4><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre>Concrete Poetry:
+
+     S P A C E
+     P     C
+     A     E
+     C     A
+     E C A P S
+
+Haiku:
+Circuit boards hum low
+Green text on black background glows
+Silicon dreams flow</pre></div><h4>19. Special Symbols</h4><ul><li><p class="ds-markdown-paragraph">Currency: €20.50, ¥15,000, ₹1,200</p></li><li><p class="ds-markdown-paragraph">Mathematical: π ≈ 3.1416, ∑x_i, √16=4</p></li><li><p class="ds-markdown-paragraph">Legal: © 2023, ® Trademark, §1.2.3</p></li><li><p class="ds-markdown-paragraph">Arrows: → ← ↑ ↓ ↔</p></li></ul><h4>20. Binary/Hex Representation</h4><div class="md-code-block md-code-block-light" style="background-color: rgb(245, 245, 245); padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap;"><pre>Binary: 01001000 01100101 01101100 01101100 01101111 (Hello)
+Hex: 48 65 6C 6C 6F
+Base64: SGVsbG8gV29ybGQh (Hello World!)</pre></div><p class="ds-markdown-paragraph">This comprehensive collection demonstrates the diverse ways information can be structured and presented across technical, scientific, literary, and visual domains. Each format serves specific communication needs, from precise technical documentation to expressive creative works.</p></div><div class="ds-flex" style="margin-top: 12px; height: 20px; margin-bottom: 20px; align-items: center; gap: 10px;"><div class="ds-flex _965abe9" style="align-items: center; gap: 16px;"><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div><div class="ds-icon-button" tabindex="0" style="--ds-icon-button-text-color: #909090; --ds-icon-button-size: 20px;"></div></div><div style="flex: 1 1 0%;"></div></div></div></div>
+    </div>
+</body>
+</html>

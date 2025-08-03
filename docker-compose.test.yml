@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # HTML to PDF API Server (Testing)
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: html-to-pdf-api-test
+    environment:
+      - NODE_ENV=test
+      - PORT=3000
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - app-network
+    ports:
+      - "3000:3000"
+
+  # Test Runner
+  test:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: html-to-pdf-test
+    environment:
+      - NODE_ENV=test
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - app-network
+    depends_on:
+      - api
+    command: ["node", "test_api.js"]
+
+networks:
+  app-network:
+    driver: bridge 

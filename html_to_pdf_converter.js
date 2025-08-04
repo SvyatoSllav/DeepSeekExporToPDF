@@ -143,7 +143,7 @@ async function main() {
         .option('-i, --input <file>', 'Input HTML file path')
         .option('-u, --url <url>', 'Input URL to convert')
         .option('-s, --string <html>', 'HTML content as string')
-        .option('-o, --output <file>', 'Output PDF file path (required)')
+        .option('-o, --output <file>', 'Output PDF file path (defaults to uploads directory)')
         .option('-f, --format <format>', 'Paper format (A4, Letter, Legal, etc.)', 'A4')
         .option('--orientation <orientation>', 'Page orientation (portrait, landscape)', 'portrait')
         .option('--margin <margin>', 'Page margins in px (top,bottom,left,right)', '20,20,20,20')
@@ -151,9 +151,28 @@ async function main() {
         .option('--scale <scale>', 'Scale factor (0.1 to 2.0)', '1.0')
         .option('--timeout <timeout>', 'Timeout in milliseconds', '30000')
         .action(async (options) => {
-            if (!options.output) {
-                console.error('❌ Output file path is required!');
-                process.exit(1);
+            // Create uploads directory if it doesn't exist
+            const uploadsDir = path.join(__dirname, 'uploads');
+            await fs.ensureDir(uploadsDir);
+
+            // Generate default output filename if not provided
+            let outputPath = options.output;
+            if (!outputPath) {
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                if (options.input) {
+                    const inputName = path.basename(options.input, path.extname(options.input));
+                    outputPath = path.join(uploadsDir, `${inputName}_${timestamp}.pdf`);
+                } else if (options.url) {
+                    const urlName = new URL(options.url).hostname.replace(/[^a-zA-Z0-9]/g, '_');
+                    outputPath = path.join(uploadsDir, `${urlName}_${timestamp}.pdf`);
+                } else if (options.string) {
+                    outputPath = path.join(uploadsDir, `string_${timestamp}.pdf`);
+                }
+            } else {
+                // If output path is provided but doesn't include uploads directory, put it there
+                if (!path.isAbsolute(outputPath) && !outputPath.startsWith('uploads/')) {
+                    outputPath = path.join(uploadsDir, outputPath);
+                }
             }
 
             if (!options.input && !options.url && !options.string) {
@@ -183,12 +202,14 @@ async function main() {
                 };
 
                 if (options.input) {
-                    await converter.convertFromFile(options.input, options.output, pdfOptions);
+                    await converter.convertFromFile(options.input, outputPath, pdfOptions);
                 } else if (options.url) {
-                    await converter.convertFromURL(options.url, options.output, pdfOptions);
+                    await converter.convertFromURL(options.url, outputPath, pdfOptions);
                 } else if (options.string) {
-                    await converter.convertFromString(options.string, options.output, pdfOptions);
+                    await converter.convertFromString(options.string, outputPath, pdfOptions);
                 }
+
+                console.log(`📁 PDF saved to: ${outputPath}`);
 
             } catch (error) {
                 console.error(`❌ Conversion failed: ${error.message}`);
@@ -206,24 +227,27 @@ async function main() {
 HTML to PDF Converter using puppeteer-html-pdf
 
 Examples:
-  # Convert HTML file to PDF with full style preservation
-  node html_to_pdf_converter.js convert -i sample.html -o output.pdf
+  # Convert HTML file to PDF (saves to uploads directory by default)
+  node html_to_pdf_converter.js convert -i sample.html
+  
+  # Convert HTML file to PDF with custom output name
+  node html_to_pdf_converter.js convert -i sample.html -o my_output.pdf
   
   # Convert URL to PDF
-  node html_to_pdf_converter.js convert -u https://example.com -o output.pdf
+  node html_to_pdf_converter.js convert -u https://example.com
   
   # Convert HTML string to PDF
-  node html_to_pdf_converter.js convert -s "<html><body><h1>Hello</h1></body></html>" -o output.pdf
+  node html_to_pdf_converter.js convert -s "<html><body><h1>Hello</h1></body></html>"
   
   # Convert with custom options
-  node html_to_pdf_converter.js convert -i sample.html -o output.pdf \\
+  node html_to_pdf_converter.js convert -i sample.html \\
     --format Letter --orientation landscape --margin 30,30,30,30 --scale 0.8
 
 Options:
   -i, --input <file>        Input HTML file path
   -u, --url <url>          Input URL to convert
   -s, --string <html>      HTML content as string
-  -o, --output <file>      Output PDF file path (required)
+  -o, --output <file>      Output PDF file path (optional, defaults to uploads directory)
   -f, --format <format>    Paper format (default: A4)
   --orientation <orient>   Page orientation (portrait/landscape)
   --margin <margins>       Page margins in px (top,bottom,left,right)
@@ -238,6 +262,8 @@ Features:
   ✅ Custom fonts and colors
   ✅ Complex layouts and tables
   ✅ Images and media support
+  ✅ Automatic uploads directory creation
+  ✅ Timestamped filenames for unique outputs
             `);
         });
 

@@ -62,7 +62,7 @@ class HTMLToPDFConverter {
             margin = { top: '20px', bottom: '20px', left: '20px', right: '20px' },
             printBackground = true,
             scale = 1.0,
-            timeout = 30000
+            timeout = 60000
         } = options;
 
         const pdfOptions = {
@@ -73,7 +73,15 @@ class HTMLToPDFConverter {
             scale: scale,
             timeout: timeout,
             headless: 'new',
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: [
+                '--no-sandbox', 
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--no-first-run',
+                '--no-zygote',
+                '--single-process'
+            ]
         };
 
         this.htmlPDF.setOptions(pdfOptions);
